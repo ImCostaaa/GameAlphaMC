@@ -12,14 +12,14 @@ HEIGHT = 600
 PURPLE = (139,0,139)
 BLACK = (255,255,255)
 #level
-level = 1
+level = 0
 timesEnemyHitBottom = 0
 #enemy position list that will keep track of all enemy positions by storing each list of coordinates in here (2d list).
 enemy_poslist = [[100, 0],[200,0],[300, 0],[400, 0],[500, 0]]
 enemy_size = 35
 enemy_sizelist = [enemy_size,enemy_size,enemy_size,enemy_size,enemy_size]
 #player functionality like size (area of rectangle) and the start x and y coordinates
-player_size=30
+player_size=35
 player_x = WIDTH/2
 player_y = HEIGHT - (player_size*2)
 #create screen by setting the display to width and height
@@ -27,6 +27,7 @@ screen = pygame.display.set_mode([WIDTH,HEIGHT])
 game_over = False
 clock = pygame.time.Clock()
 dodgecount = 0
+
 #background class that creates a background object that has both image,and location of where image is placed
 #also creates a rectangle and gives its location as the top (0), allows for image provided to be the background by being a rectangle displayed to the screen
 
@@ -36,10 +37,33 @@ class Background(pygame.sprite.Sprite):
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
+
 def levelchange(dodgecount):
-    if dodgecount == 10 or dodgecount == 20 or dodgecount == 30 or dodgecount == 40 or dodgecount == 50 or dodgecount == 60: #every addition of dodgecount += 10 here to check signifies levels
+    if dodgecount == 10 or dodgecount == 20 or dodgecount == 30 or dodgecount == 40 or dodgecount == 50 : #every addition of dodgecount += 10 here to check signifies levels
         return True
     else: return False
+
+# create backgrounds to be used in the function below that puts these images on the background coordinate of [0,0] that gets stored as the background rect
+BackGroundlvl1 = Background("background1.jpg", [0,0])
+BackGroundlvl2 = Background("background2.jpg", [0,0])
+BackGroundlvl3 = Background("background3.jpg", [0,0])
+BackGroundlvl4 = Background("background4.jpg", [0,0])
+BackGroundlvl5 = Background("background5.jpg", [0,0])
+BackGroundlvl6 = Background("backgroundfinallvl.jpg", [0,0])
+def displayBG(level):
+    print(level)
+    if level == 1:
+        screen.blit(BackGroundlvl1.image, BackGroundlvl1.rect)
+    elif level == 2:
+        screen.blit(BackGroundlvl2.image, BackGroundlvl2.rect)
+    elif level == 3:
+        screen.blit(BackGroundlvl3.image, BackGroundlvl3.rect)
+    elif level == 4:
+        screen.blit(BackGroundlvl4.image, BackGroundlvl4.rect)
+    elif level == 5:
+        screen.blit(BackGroundlvl5.image, BackGroundlvl5.rect)
+    elif level >= 6:
+        screen.blit(BackGroundlvl6.image, BackGroundlvl6.rect)
 def create_enemies(level,enemy_sizelist):
     global enemy_poslist
     if level == 2:
@@ -126,23 +150,20 @@ def drawenemies(enemy_poslist):
         enemyBackGround = Background("enemypic.jpg", [enemy_poslist[count][0], enemy_poslist[count][1]])
         screen.blit(enemyBackGround.image,enemyBackGround.rect )
         count = count + 1
-
-#before game starts create background class with appropriate parameters to set up the retro background
-BackGround = Background("background.jpg", [0,0])
 pygame.mixer.music.load("game_music.mp3")
 pygame.mixer.music.play(-1)
-#while the game not over...
 dodgecount = 0
 problemfixcount = 0
 dodgestowin = 60
+#while the game not over...
 while not game_over:
     #if level two start the graphics for level 2 at beggining then red
     if problemfixcount == 0 and (dodgecount == 0  or levelchange(dodgecount) ):
-        level1 = "Level   " + str(level)
+        level1 = "Level   " + str(level + 1)
         label = font2.render(level1, 1, (232, 111, 104))
         create_enemies(level, enemy_sizelist)
         level += 1
-        screen.blit(BackGround.image, BackGround.rect)
+        displayBG(level)
         drawenemies(enemy_poslist)
         pygame.draw.rect(screen, PURPLE, (player_x, player_y, player_size, player_size), 0)
         screen.blit(label, (165, 240))
@@ -185,14 +206,14 @@ while not game_over:
     if dodgecount == 60:
         game_over = True
         label = myfont.render("Congratulations Winner!", 1, (232, 111, 104))
-        screen.blit(BackGround.image, BackGround.rect)
+        displayBG(level)
         screen.blit(label, (25, 250))
         pygame.display.update()
         # allow music to fadeout once game is exiting
         pygame.mixer.music.fadeout(6000)
         time.sleep(6)
     else:
-        screen.blit(BackGround.image, BackGround.rect)
+        displayBG(level)
         #count to be used to increment throughout, this for loop allows for any number of enemies depending on how many i decide per level ect.
         drawenemies(enemy_poslist)
         pygame.draw.rect(screen,PURPLE,(player_x,player_y,player_size,player_size),0)
