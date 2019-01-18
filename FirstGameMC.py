@@ -162,8 +162,11 @@ while not game_over:
         level1 = "Level   " + str(level + 1)
         label = font2.render(level1, 1, (232, 111, 104))
         create_enemies(level, enemy_sizelist)
+        #incrememnt level to show the start of next level
         level += 1
+        #displayBG will display the proper background according to level
         displayBG(level)
+        #will draw the new enemies at top of screen for start of next level
         drawenemies(enemy_poslist)
         pygame.draw.rect(screen, PURPLE, (player_x, player_y, player_size, player_size), 0)
         screen.blit(label, (165, 240))
